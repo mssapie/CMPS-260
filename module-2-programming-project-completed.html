@@ -1,0 +1,292 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 2 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+// 1. Implement the stack data structure using the prototype.
+
+function Stack()
+{
+  this.items = [];
+}
+
+Stack.prototype.push = function(element)
+{
+  this.items.push(element);
+}
+
+Stack.prototype.pop = function()
+{
+  return this.items.pop();
+};
+
+Stack.prototype.isEmpty = function()
+{
+  return this.items.length == 0;
+};
+
+Stack.prototype.size = function()
+{
+  return this.items.length;
+};
+
+Stack.prototype.clear = function()
+{
+  this.items = [];
+};
+
+Stack.prototype.inlinePrint = function()
+{
+  return this.items.toString();
+};
+
+Stack.prototype.print = function()
+{
+  console.log(this.items.toString());
+};
+
+var Jimmy = new Stack();
+console.log("Oh No! Jimmy has returned! Please tell me he is empty! " + Jimmy.isEmpty());
+Jimmy.push(9);
+Jimmy.push(22);
+Jimmy.push(54);
+Jimmy.push(237);
+console.log("Jimmy is growing uncontrollably! His size is: " + Jimmy.size());
+Jimmy.push(3);
+Jimmy.push(12);
+Jimmy.push(6);
+Jimmy.push(24);
+console.log("OH CRAP! Jimmy is too big and is angry! We need to shrink Jimmy! Look at Jimmy's size: " + stacko.size());
+console.log("Let's take a look a what's inside Jimmy: " + Jimmy.inlinePrint());
+while(Jimmy.size()>3)
+{Jimmy.pop();}
+
+console.log("Great! Jimmy is now a more manageable and normally sized! Look at Jimmy's size: " + Jimmy.size());
+Jimmy.clear();
+console.log("Where did Jimmy go? He was just here a minute ago! Did Jimmy vanish? " + Jimmy.isEmpty());
+
+
+// 2. It is possible to use a stack to check if the number of parentheses in a
+//    string is balanced, meaning there are as many opening parentheses as
+//    closing ones. In addition, we can also make sure that each opening
+//    parenthesis precedes a closing parenthesis. Implement this algorithm.
+//    HINT: When encountering '(' push to the stack and when encountering ')'
+//    pop from the stack.
+
+
+function isBalanced(str)
+{
+  var strArray = str.split('');
+  checkStack = new Stack();
+  console.log(str);
+
+  // check the parentheses in str
+  for(a=0;a<strArray.length;a++)
+  {
+    if(strArray[a] == '(')
+    {
+      //console.log("pushing");
+      checkStack.push(strArray[a]);
+      continue;
+    }
+
+    if(strArray[a] == ')')
+    {
+      if(checkStack.size() == 0)
+      {
+       return false;
+      }
+      else
+      {
+
+        checkStack.pop();
+      }
+    }
+  }
+  return true;
+}
+
+
+// 3. Write a simple test program that shows your implementation in the
+//    previous question works.
+userInput = window.prompt("Please enter a string with parentheses to see if they are balanced:", "((Sure))");
+
+if(isBalanced(userInput))
+{
+  console.log("The string had a balanced number of parentheses!");
+}
+else
+{
+  console.log("The string did not have a balanced number of parentheses.");
+}
+
+// 4. Implement the queue data structure using the prototype.
+function Queue()
+{
+  this.Product = [];
+}
+
+Queue.prototype.enqueue = function(element)
+{
+  this.Product.push(element);
+};
+
+Queue.prototype.dequeue = function()
+{
+  return this.Product.shift();
+};
+
+Queue.prototype.front = function()
+{
+  return this.Product[0];
+};
+
+Queue.prototype.isEmpty = function()
+{
+  return this.Product.length == 0;
+};
+
+Queue.prototype.size = function()
+{
+  return this.Product.length;
+};
+
+Queue.prototype.inlinePrint = function()
+{
+  return this.Product.toString();
+};
+
+Queue.prototype.print = function()
+{
+  console.log(this.Product.toString());
+};
+
+var copay = new Queue();
+
+console.log("Urgent Care is open for the day! Hope we have a lot easy to treat people!");
+var patients;
+
+while(!Number.isInteger(patients))
+{
+  impatients = Number(window.prompt("Urgent Care is open for the day! How many patients were in the waiting room?","50"));
+  console.log("is the input an integer? " + Number.isInteger(patients) + " What was the input value? " + patients);
+  if(Number.isInteger(patients) == false || Number.isInteger(patients) == NaN)
+  {
+    window.alert("Please enter a valid number of patients.")
+  }
+  else
+  {
+    window.alert("Wow!  " + patients + " patients! That's a lot!")
+    break;
+  }
+}
+
+for(i=0;i<patients;i++)
+{
+  copay.enqueue(Math.floor(Math.random() * 10));
+}
+
+console.log("Look at our customers by number: " + copay.inlinePrint());
+
+console.log("Some of our patients are leaving! Hope they are feeling better!");
+
+
+randomlyServed = Math.floor(Math.random() * 10);
+
+console.log("The random number of customers leaving is " + randomlyServed + " out of " + patients + " patients.");
+if(randomlyServed<patients)
+{
+  for(j=0;j<randomlyServed;j++)
+  {
+    copay.dequeue();
+  }
+}
+else
+{
+  console.log("Looks like all of our patients have left!");
+  for(j=0;j<=copay.size();j++)
+  {
+    copay.dequeue();
+  }
+}
+console.log("Is our waiting room empty?: " + copay.isEmpty());
+// 5. Create a queue that stores edibles, that can be either fruits or
+//    vegetables. Use the constructor below to create the edible and store a
+//    few of each kind in the queue (at least 3 of each).
+
+function Edible(name, isFruit)
+{
+  this.name = name;
+  this.isFruit = isFruit;
+  this.toString = function() {
+    return "Edible: " + this.name + " Fruit: " + this.isFruit;
+  };
+}
+
+var munchQueue = new Queue();
+
+munchQueue.enqueue(new Edible("Watermelon", "Yes"));
+munchQueue.enqueue(new Edible("Asparagus", "No"));
+munchQueue.enqueue(new Edible("Raspberry", "Yes"));
+munchQueue.enqueue(new Edible("Strawberry", "Yes"));
+munchQueue.enqueue(new Edible("Squash", "No"));
+munchQueue.enqueue(new Edible("Apple", "Yes"));
+munchQueue.enqueue(new Edible("Plum", "Yes"));
+munchQueue.enqueue(new Edible("Orange", "Yes"));
+munchQueue.enqueue(new Edible("Carrot", "No"));
+munchQueue.enqueue(new Edible("Cantaloupe", "Yes"));
+
+console.log(munchQueue.inlinePrint());
+
+// 6. Create two more queues: one for fruits and one for vegetables. For this
+//    question, only create them (and leave them empty).
+var veggie = new Queue();
+var fruit = new Queue();
+
+
+// 7. Dequeue all the elements from the edible queue and enqueue them in the
+//    appropriate queue, either for fruits or vegetables.
+
+while(munchQueue.size()>0)
+{
+  food = munchQueue.dequeue();
+
+  if(food.isFruit == "Yes")
+  {fruit.enqueue(food);}
+  else
+  {veggie.enqueue(food);}
+}
+
+
+// 8. Print the final contents to the console, showing that your code works.
+
+console.log("The fruit queue contains:");
+fruit.print();
+console.log("The veggie queue contains:");
+veggie.print();
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
