@@ -1,0 +1,603 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 4 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+// 1. Implement the set data structure using the prototype.
+
+function Set()
+{
+  var items = {}; // note that this is an object instead of an array
+}
+
+Set.prototype.add = function(value)
+{
+  if (!this.has(value))
+  {
+   this[value] = value;
+   return true;
+ }
+ return false;
+}
+
+Set.prototype.delete = function(value)
+{
+  if (this.has(value))
+  {
+    delete this[value];
+    return true;
+  }
+  return false;
+}
+
+Set.prototype.has = function(value)
+{
+  return this.hasOwnProperty(value);
+}
+
+Set.prototype.clear = function()
+{
+  var allVals = this.values();
+  for(i=0;i<allVals.length;i++)
+  {
+    this.delete(allVals[i]);
+  }
+}
+
+Set.prototype.size = function()
+{
+  var count = 0;
+  for(key in this)
+  {
+    if(this.hasOwnProperty(key))
+    {
+      ++count;
+    }
+  }
+  return count;
+}
+
+Set.prototype.values = function()
+{
+  var values = [];
+
+  for(key in this)
+  {
+    if(this.hasOwnProperty(key))
+    {
+      values.push(this[key]);
+    }
+  }
+  return values;
+}
+
+Set.prototype.union = function(otherSet)
+{
+  var unionSet = new Set();
+  var values = this.values();
+
+  for (i=0; i<values.length; i++)
+  {
+    unionSet.add(values[i]);
+  }
+
+  values = otherSet.values();
+  for (i=0; i<values.length; i++)
+  {
+    unionSet.add(values[i]);
+  }
+  return unionSet;
+}
+
+Set.prototype.intersection = function(otherSet)
+{
+  var intersectionSet = new Set();
+  var values = this.values();
+
+  for (i=0; i<values.length; i++)
+  {
+    if (otherSet.has(values[i]))
+    {
+      intersectionSet.add(values[i]);
+    }
+  }
+  return intersectionSet;
+}
+
+Set.prototype.difference = function(otherSet)
+{
+  var differenceSet = new Set();
+  var values = this.values();
+
+  for (i=0; i<values.length; i++)
+  {
+    if (!otherSet.has(values[i]))
+    {
+      differenceSet.add(values[i]);
+    }
+  }
+  return differenceSet;
+}
+
+Set.prototype.subset = function(otherSet)
+{
+  if (this.size() > otherSet.size())
+  {
+    return false;
+  }
+  else
+  {
+    var values = this.values();
+
+    for (i=0; i<values.length; i++)
+    {
+      if (!otherSet.has(values[i]))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+// A professor keeps attendence of classes with the following results:
+// All students: Mary, Joe, Tim, Rosalee, Vincent, Caroline
+// Class 1: Rosalee, Joe, Mary, Tim
+// Class 2: Mary, Tim, Vincent, Rosalee, Caroline
+// Class 3: Caroline, Tim, Vincent, Rosalee, Joe
+
+// 2. Create a set of students for each class.
+
+var allStudents = new Set();
+allStudents.add("Mary");
+allStudents.add("Joe");
+allStudents.add("Tim");
+allStudents.add("Rosalee");
+allStudents.add("Vincent");
+allStudents.add("Caroline");
+
+var class1 = new Set();
+class1.add("Rosalee");
+class1.add("Joe");
+class1.add("Mary");
+class1.add("Tim");
+
+var class2 = new Set();
+class2.add("Mary");
+class2.add("Tim");
+class2.add("Vincent");
+class2.add("Rosalee");
+class2.add("Caroline");
+
+var class3 = new Set();
+class3.add("Caroline");
+class3.add("Tim");
+class3.add("Vincent");
+class3.add("Rosalee");
+class3.add("Joe");
+// 3. Use set operations to get a list of students that attended at least
+//    one class.
+
+var union1 = class1.union(class2);
+union1 = union1.union(class3);
+console.log("Which of the students are in at least one class? " + union1.values());
+// 4. Use set operations to get a list of students that attended all classes.
+
+var intersect1 = class1.intersection(class2);
+intersect1 = intersect1.intersection(class3);
+console.log("which of the students are in all classes? " + intersect1.values());
+// 5. Show that the results for (2) and (3) are a subset of all students.
+
+console.log("Is the list of students in at least one class a subset of the full student list? " + union1.subset(allStudents));
+console.log("Is the list of students in all classes a subset of the full student list? " + intersect1.subset(allStudents));
+
+// 6. Implement the dictionary data structure using the prototype.
+
+function Dictionary()
+{
+  // store all elements in the items object
+  var items = {};
+}
+
+Dictionary.prototype.set = function(key, value)
+{
+  this[key] = value;
+}
+
+Dictionary.prototype.delete = function(key)
+{
+  if (this.has(key))
+  {
+    delete this[key];
+    return true;
+  }
+  return false;
+}
+
+Dictionary.prototype.has = function(key)
+{
+  return key in this;
+}
+
+Dictionary.prototype.get = function(key)
+{
+  return this.has(key) ? this[key] : undefined;
+}
+
+Dictionary.prototype.clear = function()
+{
+  var allVals = this.keys();
+  for(i=0;i<allVals.length;i++)
+  {
+    this.delete(allVals[i]);
+  }
+}
+
+Dictionary.prototype.size = function()
+{
+  var count = 0;
+
+  for(key in this)
+  {
+    if(this.hasOwnProperty(key))
+    {
+      ++count;
+    }
+  }
+  return count;
+}
+
+Dictionary.prototype.keys = function()
+{
+  return Object.keys(this);
+}
+
+Dictionary.prototype.values = function()
+{
+  var keyzos = this.keys();
+  var values = [];
+
+  for (i=0;i<keyzos.length;i++)
+  {
+    if (this.has(keyzos[i]))
+    {
+      values.push(this.get(keyzos[i]));
+    }
+  }
+  return values;
+}
+
+Dictionary.prototype.getItems = function()
+{
+  return this;
+}
+
+// 7. Complete the method below that adds all key-value pairs from one
+//    dictionary into another. See also the example below.
+
+Dictionary.prototype.merge = function(dict)
+{
+  var keyz = dict.keys();
+
+  for (i=0; i<keyz.length; i++)
+  {
+    if(this.has(keyz[i]))
+    {
+      this.delete(keyz[i]);
+    }
+    this.set(keyz[i],dict.get(keyz[i]));
+  }
+}
+
+Dictionary.prototype.print = function()
+{
+  var printKey = this.keys();
+  var printString = "";
+
+  for (i=0; i<printKey.length; i++)
+  {
+    printString += printKey[i] + "-" + this.get(printKey[i]);
+    if(i<printKey.length - 1)
+    {
+      printString += ", ";
+    }
+  }
+
+  console.log(printString);
+}
+
+// Test your code by uncommenting these lines:
+var dict1 = new Dictionary();
+dict1.set("key1", "val1");
+dict1.set("key2", "val2");
+dict1.set("key3", "val3");
+var dict2 = new Dictionary();
+dict2.set("key3", "val3b");
+dict2.set("key4", "val4");
+dict1.merge(dict2);
+dict1.print(); // should contain key1-val1, key2-val2, key3-val3b, key4-val4
+
+// 8. Implement the hashtable data structure using the prototype.
+function ValuePair(key, value) {
+  this.key = key;
+  this.value = value;
+  this.toString = function() {
+    return "[" + this.key + " - " + this.value + "]";
+  };
+};
+
+function Node(element) {
+  this.element = element;
+  this.next = null;
+}
+
+function LinkedList() {
+  this.length = 0;
+  this.head = null;
+}
+
+LinkedList.prototype.append = function(element) {
+  var node = new Node(element);
+  if (this.head === null) {
+    this.head = node;
+  }
+  else {
+    var tmp = this.head;
+    while (tmp.next !== null) {
+      tmp = tmp.next;
+    }
+    tmp.next = node;
+  }
+  this.length++;
+};
+
+LinkedList.prototype.insert = function(position, element) {
+  var node = new Node(element);
+  if (position === 0) {
+    var oldHead = this.head;
+    this.head = node;
+    this.head.next = oldHead;
+  }
+  else {
+    var tmp = this.head;
+    for (var i = 0; i < position-1; i++) {
+      tmp = tmp.next;
+    }
+    node.next = tmp.next;
+    tmp.next = node;
+  }
+  this.length++;
+};
+
+LinkedList.prototype.removeAt = function(position) {
+  var element = null;
+  if (position === 0) {
+    element = this.head.element;
+    this.head = this.head.next;
+  }
+  else {
+    var tmp = this.head;
+    for (var i = 0; i < position-1; i++) {
+      tmp = tmp.next;
+    }
+    element = tmp.next.element;
+    var prev = tmp;
+    var middle = tmp.next;
+    var next = middle.next;
+    prev.next = next;
+  }
+  this.length--;
+  return element;
+};
+
+LinkedList.prototype.remove = function(element) {
+  var position = this.indexOf(element);
+  return this.removeAt(position);
+};
+
+LinkedList.prototype.indexOf = function(element) {
+  var tmp = this.head;
+  for (var i = 0; i < this.length; i++) {
+    if (tmp.element === element) {
+      return i;
+    }
+    tmp = tmp.next;
+  }
+  return -1;
+};
+
+LinkedList.prototype.isEmpty = function() {
+  return this.length === 0;
+};
+
+LinkedList.prototype.size = function() {
+  var length = 0;
+  var tmp = this.head;
+  while (tmp !== null) {
+    length++;
+    tmp = tmp.next;
+  }
+  return length;
+};
+
+LinkedList.prototype.getHead = function() {
+  return this.head;
+}
+
+LinkedList.prototype.toString = function() {
+  var current = this.head;
+  var string = "List: ";
+  while (current) {
+    string += current.element + (current.next ? " -> " : "");
+    current = current.next;
+  }
+  return string;
+};
+
+LinkedList.prototype.print = function() {
+  console.log(this.toString());
+};
+
+function HashTable()
+{
+  // store all elements in the table array
+  var table = [];
+}
+
+// define hash function
+function loseloseHashCode(key)
+{
+  var hash = 0;
+  for (var i = 0; i < key.length; i++)
+  {
+    hash += key.charCodeAt(i);
+  }
+  return hash % 37;
+}
+
+HashTable.prototype.put = function(key, value)
+{
+  var position = loseloseHashCode(key);
+
+  if(position > this.lastElement)
+  {
+    this.lastElement = position;
+  }
+
+  if (this[position] == undefined)
+  {
+    this[position] = new LinkedList();
+  }
+  this[position].append(new ValuePair(key, value));
+}
+
+HashTable.prototype.get = function(key)
+{
+  var position = loseloseHashCode(key);
+
+  if (this[position] !== undefined)
+  {
+    var current = this[position].getHead();
+
+    while(current.next)
+    {
+      if (current.element.key === key)
+      {
+        return current.element.value;
+      }
+      current = current.next;
+    }
+
+    if (current.element.key === key)
+    {
+      return current.element.value;
+    }
+  }
+  return undefined;
+}
+
+HashTable.prototype.remove = function(key)
+{
+  var position = loseloseHashCode(key);
+
+  if (this[position] !== undefined)
+  {
+    var current = this[position].getHead();
+
+    while(current.next)
+    {
+      if (current.element.key === key)
+      {
+        this[position].remove(current.element);
+
+        if (this[position].isEmpty())
+        {
+          this[position] = undefined;
+        }
+        return true;
+      }
+      current = current.next;
+    }
+
+    if (current.element.key === key)
+    {
+      this[position].remove(current.element);
+      if (this[position].isEmpty())
+      {
+        this[position] = undefined;
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
+HashTable.prototype.print = function()
+{
+  for (var i = 0; i < 37; i++)
+  {
+    if (this[i] !== undefined)
+    {
+      console.log(i + ": " + this[i]);
+    }
+  }
+}
+
+var ht1 = new HashTable();
+
+ht1.put("Mario", "Mario");
+ht1.put("Peach", "Peach");
+ht1.put("Bowser", "Bowser");
+ht1.put("Toad", "Toad");
+ht1.put("Ludwig", "Ludwig");
+ht1.put("Kammy", "Kammy");
+ht1.put("Roy", "Roy");
+ht1.put("Lemmy", "Lemmy");
+ht1.put("Larry", "Larry");
+ht1.put("Wendy", "Wendy");
+ht1.put("Iggy", "Iggy");
+ht1.put("Morton", "Morton");
+
+console.log("Where does Mario live? " + ht1.get("Mario"));
+console.log("Is Luigi here? " + ht1.get("Luigi"));
+console.log("Who is here then?");
+ht1.print();
+console.log("WHOA! How did the Koopa Troop get here? Let's kick them out!");
+ht1.remove("Bowser");
+ht1.remove("Ludwig");
+ht1.remove("Kammy");
+ht1.remove("Roy");
+ht1.remove("Lemmy");
+ht1.remove("Larry");
+ht1.remove("Wendy");
+ht1.remove("Iggy");
+ht1.remove("Morton");
+console.log("Who is left?");
+ht1.print();
+
+
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
