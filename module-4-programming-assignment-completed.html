@@ -279,11 +279,11 @@ function Dictionary()
   this.values = function()
   {
     var values = [];
-    for (var t in items)
+    for (var k in items)
     {
-      if (this.has(t))
+      if (this.has(k))
       {
-        values.push(items[t]);
+        values.push(items[k]);
       }
     }
     return values;
