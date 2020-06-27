@@ -1,0 +1,563 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 8 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+// 1. What is the worst case complexity of the following function?
+
+/* The worst case of this function is O(n^2). The worst case is searching through the array to the end
+   and finding no duplicates at all, meaning that the outer loop will iterate arr.length times,
+   while the inner loop will loop arr.length times from 0 to arr.length. */
+
+function hasDuplicates(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = 0; j < arr.length; j++) {
+      if (i !== j && arr[i] === arr[j]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// 2. Implement a faster version of the same function and analyze the
+//    complexity of this approach.
+
+/* This approach has a complexity of O(1). No matter what array you pass in, this code will
+   create a new Set with the array passed in, expand the information into a new array, and then compare lengths.
+   if the new array is shorter, there were duplicates. If not, there were no duplicates. */
+
+   function hasDuplicatesFast(arr)
+   {
+     var uniqueArr = [... new Set(arr)];
+
+     if(uniqueArr.length < arr.length)
+     {
+       return true;
+     }
+
+     return false;
+   }
+
+
+// 3. The travelling salesman problem is a another classic problem and we are
+//    going to solve it using a greedy algorithm. Before starting, please read
+//    through the article on Wikipedia:
+//      https://en.wikipedia.org/wiki/Travelling_salesman_problem
+//    Then implement the following:
+//    (a) Create a graph that represents the example symmetric TSP problem on
+//        the Wikipedia page.
+//    (b) Implement a greedy search that finds the shortest path. You should
+//        have the following steps: (1) pick node A as the starting position,
+//        (2) pick the closest neighbor that has not been visited as the next
+//        city to visit, (3) continue this process until returning to A,
+//        (4) print the final length of the path and also the sequence of
+//        the cities.
+//    (c) Check your results, do they make sense? Is is the optimal solution?
+
+function Stack()
+{
+  var items = [];
+
+  this.push = function(element)
+  {
+    items.push(element);
+  };
+
+  this.pop = function()
+  {
+    return items.pop();
+  };
+
+  this.isEmpty = function()
+  {
+    return items.length == 0;
+  };
+
+  this.size = function()
+  {
+    return items.length;
+  };
+
+  this.clear = function()
+  {
+    items = [];
+  };
+
+  this.inlinePrint = function()
+  {
+    return items.toString();
+  };
+
+  this.print = function()
+  {
+    console.log(items.toString());
+  };
+};
+
+function Queue()
+{
+  var items = [];
+
+  this.enqueue = function(element)
+  {
+    items.push(element);
+  };
+
+  this.dequeue = function()
+  {
+    return items.shift();
+  };
+
+  this.front = function()
+  {
+    return items[0];
+  };
+
+  this.isEmpty = function()
+  {
+    return items.length == 0;
+  };
+
+  this.size = function()
+  {
+    return items.length;
+  };
+
+  this.inlinePrint = function()
+  {
+    return items.toString();
+  };
+
+  this.print = function()
+  {
+    console.log(items.toString());
+  };
+}
+
+function Dictionary()
+{
+  // store all elements in the items object
+  var items = {};
+
+  this.set = function(key, value)
+  {
+    items[key] = value;
+  };
+
+  this.delete = function(key)
+  {
+    if (this.has(key))
+    {
+      delete items[key];
+      return true;
+    }
+    return false;
+  };
+
+  this.has = function(key)
+  {
+    return key in items;
+  };
+
+  this.get = function(key)
+  {
+    return this.has(key) ? items[key] : undefined;
+  };
+
+  this.clear = function()
+  {
+    items = {};
+  };
+
+  this.size = function()
+  {
+    var count = 0;
+
+    for(key in items)
+    {
+      if(items.hasOwnProperty(key))
+      {
+        ++count;
+      }
+    }
+    return count;
+  };
+
+  this.keys = function()
+  {
+    return Object.keys(items);
+  };
+
+  this.values = function()
+  {
+    var values = [];
+    for (var k in items)
+    {
+      if (this.has(k))
+      {
+        values.push(items[k]);
+      }
+    }
+    return values;
+  };
+
+  this.getItems = function()
+  {
+    return items;
+  };
+}
+
+function Graph()
+{
+  var vertices = [];
+  var adjList = new Dictionary();
+
+  this.addVertex = function(v)
+  {
+    vertices.push(v);
+    adjList.set(v, []);
+  };
+
+  this.addEdge = function(v, w)
+  {
+    adjList.get(v).push(w);
+    adjList.get(w).push(v);
+  };
+
+  this.toString = function()
+  {
+    var s = '';
+    for (var i=0; i<vertices.length; i++)
+    {
+      s += vertices[i] + ' -> ';
+      var neighbors = adjList.get(vertices[i]);
+      for (var j=0; j<neighbors.length; j++)
+      {
+        s += neighbors[j] + ' ';
+      }
+      s += '\n';
+    }
+    return s;
+  };
+
+  var initializeColor = function()
+  {
+    var color = [];
+    for (var i=0; i<vertices.length; i++)
+    {
+      color[(vertices[i].charCodeAt(0))%65] = 'white';
+    }
+    return color;
+  };
+
+  this.BFS = function(v)
+  {
+    var color = initializeColor(),
+    queue = new Queue(),
+    d = [],
+    pred = [],
+    returnObj = {};
+
+    queue.enqueue(v);
+
+    for (i=0; i<vertices.length; i++)
+    {
+      d[i] = 0;
+      pred[i] = null;
+    }
+
+    while (!queue.isEmpty())
+    {
+      var u = queue.dequeue(),
+      numberU = u.charCodeAt(0)%65,
+      neighbors = adjList.get(u);
+
+      color[numberU] = 'grey';
+
+      for (i=0; i<neighbors.length; i++)
+      {
+        var w = neighbors[i],
+        numberW = w.charCodeAt(0)%65;
+
+        if (color[numberW] === 'white')
+        {
+          color[numberW] = 'grey';
+          d[numberW] = d[numberU] + 1;
+          pred[numberW] = u;
+          queue.enqueue(w);
+        }
+      }
+      color[numberU] = 'black';
+    }
+
+    var returnString = '';
+
+    returnString += 'Distances: [';
+
+    for(j=0;j<vertices.length;j++)
+    {
+      returnString += vertices[j] + ': ' + d[j] + ', ';
+      if(j==vertices.length-1)
+      {
+        returnString += vertices[j] + ': ' + d[j];
+      }
+    }
+    returnString += '],\n';
+
+    returnString += 'Predecessors: ['
+    for(k=0;k<vertices.length;k++)
+    {
+      returnString += vertices[k] + ': "' + pred[k] + '", ';
+      if(k==vertices.length-1)
+      {
+        returnString += vertices[k] + ': "' + pred[k] + '"';
+      }
+    }
+    returnString += ']';
+
+    returnObj = {distances : d, predecessors : pred, stringer : returnString};
+
+    return returnObj;
+  };
+
+  var time = 0;
+  this.DFS = function()
+  {
+    var color = initializeColor(),
+    d = [],
+    f = [],
+    p = [];
+    time = 0,
+    vertNum = 0,
+    returnObj = {};
+
+    for (var i=0; i<vertices.length; i++)
+    {
+      vertNum = vertices[i].charCodeAt(0)%65;
+      f[vertNum] = 0;
+      d[vertNum] = 0;
+      p[vertNum] = null;
+    }
+
+    vertNum = 0;
+
+    for (i=0; i<vertices.length; i++)
+    {
+      vertNum = vertices[i].charCodeAt(0)%65;
+      if (color[vertNum] === 'white')
+      {
+        DFSVisit(vertices[i], color, d, f, p);
+      }
+    }
+
+    returnObj = {discovery:d, finished:f, predecessors:p}
+
+    return returnObj;
+  };
+
+  var DFSVisit = function(u, color, d, f, p)
+  {
+    var numberU = u.charCodeAt(0)%65,
+    numberW = 0;
+    console.log('discovered ' + u);
+    color[numberU] = 'grey';
+    d[numberU] = ++time;
+    var neighbors = adjList.get(u);
+    for (var i=0; i<neighbors.length; i++)
+    {
+      var w = neighbors[i];
+      numberW = w.charCodeAt(0)%65;
+
+      if (color[numberW] === 'white')
+      {
+        p[numberW] = u;
+        DFSVisit(w,color, d, f, p);
+      }
+    }
+    color[numberU] = 'black';
+    f[numberU] = ++time;
+    console.log('explored ' + u);
+  };
+
+  var graphene = [[0, 2, 4, 0, 0, 0],
+               [0, 0, 1, 4, 2, 0],
+               [0, 0, 0, 0, 3, 0],
+               [0, 0, 0, 0, 0, 2],
+               [0, 0, 0, 3, 0, 2],
+               [0, 0, 0, 0, 0, 0]];
+
+  this.dijkstra = function(src)
+  {
+    var dist = [],
+    visited = [],
+    length = graphene.length;
+
+    for (var i = 0; i < length; i++)
+    {
+      dist[i] = Infinity;
+      visited[i] = false;
+    }
+
+    dist[src.charCodeAt(0) % 65] = 0;
+
+    for (var i = 0; i < length-1; i++)
+    {
+      var u = minDistance(dist, visited);
+
+      visited[u] = true;
+
+      for (var v = 0; v < length; v++)
+      {
+        if (!visited[v] && graphene[u][v]!=0 && dist[u] != Infinity && dist[u]+graphene[u][v] < dist[v])
+        {
+          dist[v] = dist[u] + graphene[u][v];
+        }
+      }
+    }
+    return dist;
+  };
+
+  var minDistance = function(dist, visited)
+  {
+    var min = Infinity, minIndex = -1;
+
+    for (var v = 0; v < dist.length; v++)
+    {
+      if (visited[v] == false && dist[v] <= min)
+      {
+        min = dist[v];
+        minIndex = v;
+      }
+    }
+    return minIndex;
+  };
+}
+
+function printNodeToo(value)
+{
+  console.log('Visited vertex: ' + value);
+}
+
+// 4. Solve https://csacademy.com/contest/interview-archive/task/intersecting-rectangles/
+//    What is the runtime complexity of your solution?
+//    HINT: Try to break down the problems into smaller steps. For example,
+//          find a convenient way to represent rectangles and define a function
+//          that tests whether one rectangle is inside another. Then test your
+//          code on just two rectangles first to make sure it works.
+
+function Rectangle(inx1,iny1,inx2,iny2)
+{
+  this.x1 = inx1;
+  this.y1 = iny1;
+  this.x2 = inx2;
+  this.y2 = iny2;
+}
+
+function intersect(rect)
+{
+  var result = 0;
+
+  for(i=0; i<rect.length; i++)
+  {
+    for(let j=i+1; j<rect.length; j++)
+    {
+      if(overlap(rect[i], rect[j]))
+      {
+        result++;
+      }
+    }
+  }
+  return result;
+}
+
+function overlap(rect1, rect2)
+{
+  if(rect1.x2 <= rect2.x1 || rect2.x2 <= rect1.x1)
+  {
+    return false;
+  }
+  if(rect1.y2 <= rect2.y1 || rect2.y2 <= rect1.y1)
+  {
+    return false;
+  }
+  return true;
+}
+
+var recInput;
+
+while(true)
+{
+  recInput = Number(window.prompt("Please enter the number of rectangles you'd like to check for intersection." , "2"));
+
+  if(Number.isInteger(recInput) == false || Number.isInteger(recInput) == NaN || recInput < 0)
+  {
+    window.alert("The value you entered is either not a number or not a whole positive number. Please try again!");
+  }
+  else
+  {
+    break;
+  }
+}
+
+var rectArray = [],
+strArr,
+instr = "",
+inx1,
+iny1,
+inx2,
+iny2;
+
+for(i = 0;i<recInput;i++)
+{
+  while(true)
+  {
+    instr = window.prompt("Please enter the lower left x,y and upper "
+    + "right x,y coordinates for the rectangle # " + (i+1) + ", as positive whole numbers, in format x1,y1,x2,y2:", "0,0,0,0");
+    strArr = instr.split(",");
+    inx1 = Number(strArr[0]),
+    iny1 = Number(strArr[1]),
+    inx2 = Number(strArr[2]),
+    iny2 = Number(strArr[3]);
+
+    if(strArr.length == 4 && Number.isInteger(inx1) && inx1 > 0 && Number.isInteger(iny1) && iny1 > 0 &&
+       Number.isInteger(inx2) && inx2 > 0 && Number.isInteger(iny2) && iny2 > 0)
+    {
+      rectArray.push(new Rectangle(inx1,iny1,inx2,iny2));
+      break;
+    }
+    else
+    {
+      window.alert("The value or values you entered do not follow the x1,y1,x2,y2 format, or they do not contain positive numbers. Please try again!");
+    }
+  }
+}
+
+console.log("The number of rectangles that intersect are: " + intersect(rectArray));
+
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
